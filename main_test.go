@@ -1,5 +1,11 @@
 package main
 
+import (
+	"fmt"
+	"log"
+	"testing"
+)
+
 // Attributes received on new version creation
 // map[dataFormat:JSON_API_V1 eventType:SECRET_VERSION_ADD secretId:projects/827585297303/secrets/test-secret timestamp:2022-03-27T14:31:37.964139-07:00 versionId:projects/827585297303/secrets/test-secret/versions/2]
 
@@ -39,3 +45,18 @@ const bodyOnDeletion = `{
   ],
   "etag": "\"15db399fc001fa\""
 }`
+
+func TestSomething(t *testing.T) {
+	var fullSecretID = "projects/827585297303/secrets/test-secret"
+
+	var projectNumber int
+	var secretID string
+	_, err := fmt.Sscanf(fullSecretID, "projects/%d/secrets/%s",
+		&projectNumber, &secretID)
+	if err != nil {
+		t.Fatalf("%v", err)
+	}
+	log.Println("projectNumber =", projectNumber)
+	log.Println("secretID =", secretID)
+
+}
