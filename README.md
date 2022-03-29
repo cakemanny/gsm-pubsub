@@ -1,5 +1,7 @@
+What's this?
 
-# Setup
+
+## Setup
 
 See https://cloud.google.com/secret-manager/docs/event-notifications for
 extra details on setting up event notifications. I detail it briefly here
@@ -14,10 +16,9 @@ gcloud beta services identity create \
     --service "secretmanager.googleapis.com" \
     --project "${PROJECT_ID}"
 
-# This will print out a service account which can be constructed as follows
+# ^ This will print out a service account which can be constructed as follows ˅
 
-PROJECT_NUMBER=gcloud projects describe $PROJECT_ID \
-    --format=json | jq -r '.projectNumber'
+PROJECT_NUMBER=gcloud projects describe $PROJECT_ID --format='value(projectNumber)'
 export SM_SERVICE_ACCOUNT=service-${PROJECT_NUMBER}@gcp-sa-secretmanager.iam.gserviceaccount.com
 
 
@@ -40,7 +41,7 @@ gcloud secrets create test-secret \
 
 
 This application also needs some permissions.
-I did my testing in a [kind](https://kind.sigs.k8s.io/) cluster, so here have
+I did my testing in a [kind](https://kind.sigs.k8s.io/) cluster, so here I've
 called the service account `kind-cluster-sm`, but adjust accordingly.
 
 ```shell
@@ -97,7 +98,7 @@ spec:
       - name: gsm-pubsub
         env:
         - name: PROJECT_ID
-          value: your-project-id-here
+          value: $PROJECT_ID
         - name: SUBSCRIPTION
           value: secrets.events.gsm-pubsub
         - name: GOOGLE_APPLICATION_CREDENTIALS
@@ -111,6 +112,57 @@ spec:
         secret:
           secretName: gsm-application-credentials
           optional: false
+EOF
+
+kubectl apply -k .
+```
+
+Instead if deploying in GKE with workload identity, it might look a bit
+more like the below. I keep the service account name `kind-cluster-sa`
+for ease of matching with further above.
+
+```shell
+cat > kustomization.yaml <<EOF
+namespace: gsm
+resources:
+- github.com/cakemanny/gsm-pubsub/bases/main
+- namespace.yaml
+patches:
+- deployment.yaml
+- service-account.yaml
+EOF
+
+cat > namespace.yaml <<EOF
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: gsm
+EOF
+
+cat > service-account.yaml <<EOF
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: gsm-sa
+  annotations:
+    iam.gke.io/gcp-service-account: kind-cluster-sm@PROJECT_ID.iam.gserviceaccount.com
+EOF
+
+cat > deployment.yaml <<EOF
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gsm-pubsub
+spec:
+  template:
+    spec:
+      containers:
+      - name: gsm-pubsub
+        env:
+        - name: PROJECT_ID
+          value: $PROJECT_ID
+        - name: SUBSCRIPTION
+          value: secrets.events.gsm-pubsub
 EOF
 
 kubectl apply -k .

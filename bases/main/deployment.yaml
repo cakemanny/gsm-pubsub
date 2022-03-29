@@ -14,6 +14,7 @@ spec:
       labels:
         app: gsm-pubsub
     spec:
+      serviceAccountName: gsm-sa
       containers:
       - name: gsm-pubsub
         image: ghcr.io/cakemanny/gsm-pubsub:latest
