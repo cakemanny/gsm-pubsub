@@ -6,7 +6,6 @@ import (
 	"log"
 	"os"
 	"sync/atomic"
-	"time"
 
 	"cloud.google.com/go/pubsub"
 )
@@ -42,8 +41,8 @@ func pullMsgs(projectID, subID string) error {
 	// Receive messages for 10 seconds, which simplifies testing.
 	// Comment this out in production, since `Receive` should
 	// be used as a long running operation.
-	ctx, cancel := context.WithTimeout(ctx, 360*time.Second)
-	defer cancel()
+	//ctx, cancel := context.WithTimeout(ctx, 360*time.Second)
+	//defer cancel()
 
 	var received int32
 	err = sub.Receive(ctx, func(_ context.Context, msg *pubsub.Message) {

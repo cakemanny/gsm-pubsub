@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gsm-pubsub
+  labels:
+    app: gsm-pubsub
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gsm-pubsub
+  template:
+    metadata:
+      labels:
+        app: gsm-pubsub
+    spec:
+      containers:
+      - name: gsm-pubsub
+        image: ghcr.io/cakemanny/gsm-pubsub:latest
+        imagePullPolicy: Never
+        env:
+        - name: PROJECT_ID
+          value: your-project-id
+        - name: SUBSCRIPTION
+          value: secrets.events.gsm-pubsub

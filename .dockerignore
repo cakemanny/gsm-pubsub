@@ -1,0 +1,14 @@
+# Usual Recommendations
+.git
+*Dockerfile*
+*docker-compose*
+
+# Things from this project
+/gsm-pubsub
+Makefile
+*.md
+
+# Things that won't be there in CI, but while I'm testing locally...
+/tmp
+.envrc
+*.swp
