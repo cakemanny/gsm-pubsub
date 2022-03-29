@@ -78,7 +78,7 @@ secretGenerator:
   - key.json
 EOF
 
-cat > namespace.yml <<EOF
+cat > namespace.yaml <<EOF
 apiVersion: v1
 kind: Namespace
 metadata:
