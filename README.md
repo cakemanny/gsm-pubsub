@@ -1,5 +1,12 @@
 What's this?
 
+Near realtime replication of Google Secret Manager (GSM) secrets into
+kubernetes secrets.
+
+Event notifications are enabled in GSM. This worload runs in your cluster and
+listens for the notifications on a Google Pub/Sub subscription.
+
+_Well... when it's done_
 
 ## Setup
 
